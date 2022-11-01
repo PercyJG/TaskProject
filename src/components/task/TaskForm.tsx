@@ -1,64 +1,51 @@
-import React from "react";
-import { connect } from "react-redux";
+import React, { useState } from "react";
 import { Task } from "../../redux/Dtos/Task";
-import * as taskActions from "../../redux/actions/taskActions";
-import PropTypes from "prop-types"
-import { AnyAction, bindActionCreators, Dispatch } from "redux";
+import { addTask } from "../../redux/reducers/taskSlice";
+import { useAppDispatch } from "../../redux/storeHooks";
+import { v4 as uuidv4 } from "uuid";
 
-class TaskForm extends React.Component{
-    state = {
-        task: {
-            id: NaN,
-            title: "",
-            due_date: "",
-            create_date: "",
-            complete: false
-        }
-    }
-    static propTypes: { tasks: PropTypes.Validator<any[]>; actions: PropTypes.Validator<object>; };
+const TaskForm: React.FC = () => {
+  const dispatch = useAppDispatch();
 
+  const [task, setTask] = useState<Task>({
+    id: "",
+    title: "",
+    due_date: "",
+    create_date: "",
+    complete: false,
+  });
 
-    handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const task = { ...this.state.task, [event.target.name]: event.target.value};
-        this.setState({task});
-    }
-    handleSubmit = (event: React.ChangeEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        TaskForm.propTypes.actions.createTask(this.state.task);
-    }
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newtask = { ...task, [event.target.name]: event.target.value };
+    setTask({ ...newtask });
+  };
 
-    render() {
-        return(
-            <form onSubmit={this.handleSubmit}>
-                <div className="form__item"></div>
-                <label>Task Title:</label>
-                <input type="text" name="title" onChange={this.handleChange} value={this.state.task.title} />
-                <label>Due Date:</label>
-                <input type="date" name="due_date" onChange={this.handleChange} value={this.state.task.due_date} />
-                <input type="submit" value="Save" />
-            </form>
-        );
-    }
-}
+  const handleSubmit = (event: React.ChangeEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    task.id = uuidv4();
+    dispatch(addTask(task));
+  };
 
-TaskForm.propTypes = {
-  tasks: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="form__item"></div>
+      <label>Task Title:</label>
+      <input
+        type="text"
+        name="title"
+        onChange={handleChange}
+        value={task.title}
+      />
+      <label>Due Date:</label>
+      <input
+        type="date"
+        name="due_date"
+        onChange={handleChange}
+        value={task.due_date}
+      />
+      <input type="submit" value="Save Task" />
+    </form>
+  );
 };
 
-function mapStateToProps(state: { tasks: any; }) {
-  return {
-    tasks: state.tasks
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch<AnyAction>) {
-  return {
-    actions: bindActionCreators(taskActions, dispatch)
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TaskForm);
+export default TaskForm;

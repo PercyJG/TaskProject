@@ -1,19 +1,14 @@
-import { createStore, applyMiddleware, compose } from "redux";
-import rootReducer from "./reducers";
-import reduxImmutableStateInvariant from "redux-immutable-state-invariant"
+import { configureStore } from "@reduxjs/toolkit";
+import taskSlice from "./reducers/taskSlice";
 
-declare global{
-    interface Window{
-        __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
-    }
-}
+const store = configureStore({
+  reducer: {
+    taskSlice,
+  },
+});
 
-export default function configureStore(initialState?: any){
-    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+export type RootState = ReturnType<typeof store.getState>;
 
-    return createStore(
-        rootReducer,
-        initialState,
-        composeEnhancers(applyMiddleware(reduxImmutableStateInvariant()))
-    );
-}
+export type AppDispatch = typeof store.dispatch;
+
+export default store;
