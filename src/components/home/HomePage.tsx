@@ -1,15 +1,20 @@
 import React from "react";
 import TaskForm from "../task/TaskForm";
 import TaskList from "../task/TaskList";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 class HomePage extends React.Component {
   render() {
     return (
-      <div>
-        <h1>task list application</h1>
-        <TaskForm />
-        <TaskList />
-      </div>
+      <Router>
+        <div>
+          <Routes>
+            <Route path=":id" element={<TaskForm />} />
+            <Route path="/" element={<TaskForm />} />
+          </Routes>
+          <TaskList />
+        </div>
+      </Router>
     );
   }
 }

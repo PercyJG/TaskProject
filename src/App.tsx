@@ -1,13 +1,23 @@
 import React from "react";
-import logo from "./logo.svg";
+import { createStore, combineReducers, applyMiddleware } from "redux";
 import "./App.css";
 import HomePage from "./components/home/HomePage";
-import store from "./redux/configureStore";
 import { Provider as ReduxProvider } from "react-redux";
+import { taskReducer } from "./redux/reducers/taskReducer";
+import thunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
+
+let reducers = combineReducers({ taskReducer });
+
+const store = createStore(
+  reducers,
+  composeWithDevTools(applyMiddleware(thunk))
+);
 
 function App() {
   return (
     <ReduxProvider store={store}>
+      <h1>task list application</h1>
       <HomePage />
     </ReduxProvider>
   );

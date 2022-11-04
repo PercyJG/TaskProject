@@ -1,29 +1,31 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { connect } from "react-redux";
+import { Task } from "../../interface/ITask";
 import {
-  getTaskSelector,
-  changeTaskStatus,
-  deteleTask,
-} from "../../redux/reducers/taskSlice";
-import { useAppDispatch } from "../../redux/storeHooks";
-import { getTasks } from "../../service/task.service";
+  changeStateTask,
+  deleteTask,
+  getTasks,
+} from "../../service/taskService";
 
-const TaskList: React.FC = () => {
-  const tasks = useSelector(getTaskSelector);
-  const dispatch = useAppDispatch();
-
+const TaskList: React.FC = ({
+  getTasks,
+  changeStateTask,
+  deleteTask,
+  stateTask,
+}: any) => {
   useEffect(() => {
-    debugger;
     getTasks();
-  });
+  }, [getTasks]);
 
-  const markTask = (id: string) => {
-    dispatch(changeTaskStatus(id));
-  };
+  function RemoveTask(id: string) {
+    if (window.confirm("Delete Task?")) {
+      deleteTask(id);
+    }
+  }
 
-  const RemoveTask = (id: string) => {
-    dispatch(deteleTask(id));
-  };
+  function changeTaskStatus(id: string) {
+    changeStateTask(id);
+  }
 
   return (
     <div>
@@ -40,21 +42,20 @@ const TaskList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => (
+          {stateTask.taskList.map((task: Task) => (
             <tr key={`${task.id}`}>
               <td>
                 <input
                   type="checkbox"
                   checked={task.complete}
-                  onChange={() => markTask(task.id)}
+                  onChange={() => changeTaskStatus(task.id)}
                 />
               </td>
-              <td>{`${task.complete}`}</td>
               <td>{`${task.title}`}</td>
               <td>{`${task.due_date}`}</td>
               <td>{`${task.create_date}`}</td>
               <td>
-                <a href={`?name=${task.id}`}>edit</a>
+                <a href={`/${task.id}`}>edit</a>
               </td>
               <td onClick={() => RemoveTask(task.id)}>del</td>
             </tr>
@@ -65,4 +66,16 @@ const TaskList: React.FC = () => {
   );
 };
 
-export default TaskList;
+const mapStateProps = (state: any) => {
+  return {
+    stateTask: state.taskReducer,
+  };
+};
+
+const mapDispatchToProps = {
+  getTasks,
+  deleteTask,
+  changeStateTask,
+};
+
+export default connect(mapStateProps, mapDispatchToProps)(TaskList);
