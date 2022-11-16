@@ -1,26 +1,14 @@
 import React from "react";
-import { createStore, combineReducers, applyMiddleware } from "redux";
-import "./App.css";
-import HomePage from "./components/home/HomePage";
-import { Provider as ReduxProvider } from "react-redux";
-import { taskReducer } from "./redux/reducers/taskReducer";
-import thunk from "redux-thunk";
-import { composeWithDevTools } from "redux-devtools-extension";
+import TaskForm from "./components/Tasks/TaskForm";
+import TaskList from "./components/Tasks/TaskList";
 
-let reducers = combineReducers({ taskReducer });
-
-const store = createStore(
-  reducers,
-  composeWithDevTools(applyMiddleware(thunk))
-);
-
-function App() {
+const App: React.FC = () => {
   return (
-    <ReduxProvider store={store}>
-      <h1>task list application</h1>
-      <HomePage />
-    </ReduxProvider>
+    <>
+      <TaskForm />
+      <TaskList />
+    </>
   );
-}
+};
 
 export default App;
