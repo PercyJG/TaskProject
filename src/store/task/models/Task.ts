@@ -3,5 +3,5 @@ export interface Task {
   title: string;
   due_date: string;
   create_date: string;
-  complete: boolean;
+  checked: boolean;
 }

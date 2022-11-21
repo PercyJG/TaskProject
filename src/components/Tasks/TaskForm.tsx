@@ -1,5 +1,5 @@
-import { Button } from "@material-ui/core";
-import { Field, Form, Formik } from "formik";
+import { Button, StylesProvider, TextField } from "@material-ui/core";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -9,9 +9,8 @@ import { AppState } from "../../store/rootStore";
 import { Task } from "../../store/task/models/Task";
 import { PostAddStatus } from "../../store/task/TaskAction";
 import { DatedElement } from "../FormElements/DateElement";
-import { TextFieldElement } from "../FormElements/TextFieldElement";
 import * as Yup from "yup";
-import { validate } from "uuid";
+import style from "./TaskForm.module.css";
 
 interface props {}
 
@@ -44,7 +43,7 @@ class TaskForm extends Component<LinkProps, { task: Task; error: boolean }> {
         title: "",
         due_date: "",
         create_date: "",
-        complete: false,
+        checked: false,
       },
       error: false,
     };
@@ -60,57 +59,55 @@ class TaskForm extends Component<LinkProps, { task: Task; error: boolean }> {
     }));
   };
 
-  handleSubmit = (task: Task) => {
-    this.props.PostAddStatus(task);
-  };
-
   render() {
     return (
       <>
-        <h2>Add new task</h2>
-        <Formik
-          initialValues={{
-            id: "",
-            title: "",
-            due_date: "",
-            create_date: new Date().toLocaleDateString(),
-            complete: false,
-          }}
-          validationSchema={Yup.object().shape({
-            id: Yup.string(),
-            title: Yup.string()
-              .max(25, "Must be 25 characters or less")
-              .required("Title required"),
-            due_date: Yup.string().required("Due daterequired"),
-            create_date: Yup.string(),
-            complete: Yup.boolean().required("required"),
-          })}
-          onSubmit={(values, { resetForm }) => {
-            this.handleSubmit(values);
-            resetForm();
-          }}
-        >
-          {({ values }) => (
-            <Form>
-              <div>
-                <Field
-                  name="title"
-                  label="Task title"
-                  placeholder="Title of the task"
-                  component={TextFieldElement}
-                />
-              </div>
-              <div>
-                <Field
-                  name="due_date"
-                  label="Task due date"
-                  component={DatedElement}
-                />
-              </div>
-              <Button type="submit">Save Task</Button>
-            </Form>
-          )}
-        </Formik>
+        <StylesProvider injectFirst>
+          <Formik
+            initialValues={this.state.task}
+            validationSchema={Yup.object().shape({
+              id: Yup.string(),
+              title: Yup.string()
+                .max(25, "Must be 25 characters or less")
+                .required("Title required"),
+              due_date: Yup.string().required("Due date required"),
+              create_date: Yup.string(),
+              checked: Yup.boolean().required("required"),
+            })}
+            onSubmit={(values, { resetForm }) => {
+              debugger;
+              values.create_date = new Date().toLocaleDateString("fr-CA");
+              this.props.PostAddStatus(values);
+              resetForm();
+            }}
+          >
+            {({ values }) => (
+              <Form className={style.form}>
+                <p className={style.form_title}>Add new task</p>
+                <div className={style.form_item}>
+                  <label>Task title:</label>
+                  <Field
+                    className={style.form_input_textfield}
+                    InputProps={{ disableUnderline: true }}
+                    as={TextField}
+                    name="title"
+                    placeholder="Title of the task"
+                  />
+                  <ErrorMessage className={style.form_error} name="title" />
+                </div>
+                <div className={style.form_item}>
+                  <label>Due Date</label>
+                  <Field
+                    name="due_date"
+                    InputProps={{ disableUnderline: true }}
+                    component={DatedElement}
+                  />
+                </div>
+                <Button className={style.form_button}>Add new task</Button>
+              </Form>
+            )}
+          </Formik>
+        </StylesProvider>
       </>
     );
   }

@@ -9,9 +9,15 @@ import {
   GetRequestTasks,
   PutChangeTastStatus,
   DeleteTaskStatus,
+  PutEditTaskStatus,
 } from "../../store/task/TaskAction";
+import { styled } from "@mui/material/styles";
+
+import CustomizedDialogs from "./EditTaskForm";
+import style from "./TaskList.module.css";
 import {
   Paper,
+  StylesProvider,
   Table,
   TableBody,
   TableCell,
@@ -19,7 +25,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import EditTaskButton from "./EditTaskButton";
+import { tableCellClasses } from "@mui/material";
 
 interface props {}
 
@@ -31,6 +37,7 @@ interface LinkDispatchProps {
   GetRequestTasks: () => void;
   PutChangeTastStatus: (id: string) => void;
   DeleteTaskStatus: (id: string) => void;
+  PutEditTaskStatus: (task: Task) => void;
 }
 
 type LinkProps = props & LinkStateProps & LinkDispatchProps;
@@ -45,7 +52,31 @@ const mapDispatchToProps = (
   GetRequestTasks: bindActionCreators(GetRequestTasks, dispatch),
   PutChangeTastStatus: bindActionCreators(PutChangeTastStatus, dispatch),
   DeleteTaskStatus: bindActionCreators(DeleteTaskStatus, dispatch),
+  PutEditTaskStatus: bindActionCreators(PutEditTaskStatus, dispatch),
 });
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.grey[500],
+    color: theme.palette.common.black,
+    border: "2px solid" + theme.palette.common.black,
+    padding: "5px",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    border: "2px solid" + theme.palette.common.black,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: "2px solid" + theme.palette.common.black,
+  },
+}));
 
 class TaskList extends Component<LinkProps> {
   componentDidMount() {
@@ -57,48 +88,63 @@ class TaskList extends Component<LinkProps> {
   eraseTask(id: string) {
     this.props.DeleteTaskStatus(id);
   }
+  updateTask(task: Task) {
+    this.props.PutChangeTastStatus(task.id);
+  }
 
   render() {
     const { tasks } = this.props;
     return (
       <>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Completed</TableCell>
-                <TableCell>Task title</TableCell>
-                <TableCell>Due Date</TableCell>
-                <TableCell>Created</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tasks.map((task: Task) => (
-                <TableRow key={task.id}>
-                  <TableCell>
-                    <input
-                      type="checkbox"
-                      checked={task.complete}
-                      onChange={() => this.changeTaskStatus(task.id)}
-                    />
-                  </TableCell>
-                  <TableCell>{task.title}</TableCell>
-                  <TableCell>{task.due_date}</TableCell>
-                  <TableCell>{task.create_date}</TableCell>
-                  <TableCell>
-                    <a href={`/${task.id}`}>Edit</a>
-                  </TableCell>
-                  <TableCell>
-                    <EditTaskButton editTask={task} />
-                  </TableCell>
+        <StylesProvider injectFirst>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell className={style.tableCell_center}>
+                    Completed
+                  </StyledTableCell>
+                  <StyledTableCell>Task title</StyledTableCell>
+                  <StyledTableCell>Due Date</StyledTableCell>
+                  <StyledTableCell>Created</StyledTableCell>
+                  <StyledTableCell className={style.tableCell_center}>
+                    Edit
+                  </StyledTableCell>
+                  <StyledTableCell className={style.tableCell_center}>
+                    Delete
+                  </StyledTableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <div id="editTaskForm"></div>
+              </TableHead>
+              <TableBody>
+                {tasks.map((task: Task) => (
+                  <StyledTableRow key={task.id}>
+                    <StyledTableCell className={style.tableCell_center}>
+                      <input
+                        className={style.check_box}
+                        type="checkbox"
+                        checked={task.checked}
+                        onChange={() => this.changeTaskStatus(task.id)}
+                      />
+                    </StyledTableCell>
+                    <StyledTableCell>{task.title}</StyledTableCell>
+                    <StyledTableCell>{task.due_date}</StyledTableCell>
+                    <StyledTableCell>{task.create_date}</StyledTableCell>
+                    <StyledTableCell className={style.tableCell_center}>
+                      <CustomizedDialogs task={task} />
+                    </StyledTableCell>
+                    <StyledTableCell
+                      className={`${style.tableCell_center} ${style.edit_button}`}
+                      onClick={() => this.eraseTask(task.id)}
+                    >
+                      Del
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div id="editTaskForm"></div>
+        </StylesProvider>
       </>
     );
   }

@@ -47,7 +47,7 @@ export const TaskReducer = (
     case CHANGE_TASK_STATUS_SUCCESS:
       state.tasks.map((task) => {
         if (task.id === action.taskId) {
-          task.complete = !task.complete;
+          task.checked = !task.checked;
         }
       });
       return { loading: false, tasks: [...state.tasks], error: "" };
@@ -68,12 +68,23 @@ export const TaskReducer = (
     case UPDATE_TASK_REQUEST:
       return { loading: true, tasks: state.tasks, error: "" };
     case UPDATE_TASK_SUCCESS:
-      let newTasks = state.tasks.filter((task) => task.id !== action.taskId);
+      /*let newTasks = state.tasks.filter(
+        (task) => task.id !== action.tasks[0].id
+      );
       return {
         loading: false,
         tasks: [...newTasks, action.tasks[0]],
         error: "",
-      };
+      };*/
+      state.tasks.map((task) => {
+        if (task.id === action.tasks[0].id) {
+          task.title = action.tasks[0].title;
+          task.due_date = action.tasks[0].due_date;
+          task.checked = action.tasks[0].checked;
+          return 0;
+        }
+      });
+      return { loading: false, tasks: [...state.tasks], error: "" };
     case UPDATE_TASK_FAILURE:
       return { loading: false, tasks: state.tasks, error: action.error };
 

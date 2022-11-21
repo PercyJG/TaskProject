@@ -1,0 +1,17 @@
+.tableCell_center{
+    text-align: center;
+    color: blue;
+    text-decoration: underline;
+}
+
+.tableCell_center:hover {
+  cursor: pointer;
+}
+
+.check_box{
+    accent-color: black;
+}
+
+.edit_button{
+  border: 0 
+}

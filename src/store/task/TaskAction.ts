@@ -59,7 +59,7 @@ export const GetRequestTasks = () => {
     dispatch(requestTasks());
     try {
       const response = await axios.get(
-        `https://mocki.io/v1/3c7a6eb1-ab44-487f-a445-6766ae5b7845`
+        `https://mocki.io/v1/e20e036a-e7af-46a9-a716-162f9bb14cfc`
       );
       const data = response.data;
       const responseStatus = response.status;
@@ -110,7 +110,7 @@ export const PutChangeTastStatus = (taskId: string) => {
     dispatch(requestChangeTasksStatus());
     try {
       const response = await axios.get(
-        `https://mocki.io/v1/3c7a6eb1-ab44-487f-a445-6766ae5b7845`
+        `https://mocki.io/v1/e20e036a-e7af-46a9-a716-162f9bb14cfc`
       );
       const responseStatus = response.status;
       if (responseStatus === 200) {
@@ -157,7 +157,7 @@ export const PostAddStatus = (task: Task) => {
     dispatch(requestAddTasks());
     try {
       const response = await axios.get(
-        `https://mocki.io/v1/3c7a6eb1-ab44-487f-a445-6766ae5b7845`
+        `https://mocki.io/v1/e20e036a-e7af-46a9-a716-162f9bb14cfc`
       );
       const responseStatus = response.status;
       if (responseStatus === 200) {
@@ -204,7 +204,7 @@ export const PutEditTaskStatus = (task: Task) => {
     dispatch(requestUpdateTasks());
     try {
       const response = await axios.get(
-        `https://mocki.io/v1/3c7a6eb1-ab44-487f-a445-6766ae5b7845`
+        `https://mocki.io/v1/e20e036a-e7af-46a9-a716-162f9bb14cfc`
       );
       const responseStatus = response.status;
       if (responseStatus === 200) {
@@ -251,7 +251,7 @@ export const DeleteTaskStatus = (taskId: string) => {
     dispatch(requestDeleteTasks());
     try {
       const response = await axios.get(
-        `https://mocki.io/v1/3c7a6eb1-ab44-487f-a445-6766ae5b7845`
+        `https://mocki.io/v1/e20e036a-e7af-46a9-a716-162f9bb14cfc`
       );
       const responseStatus = response.status;
       if (responseStatus === 200) {
