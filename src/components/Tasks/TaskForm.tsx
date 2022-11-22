@@ -75,7 +75,6 @@ class TaskForm extends Component<LinkProps, { task: Task; error: boolean }> {
               checked: Yup.boolean().required("required"),
             })}
             onSubmit={(values, { resetForm }) => {
-              debugger;
               values.create_date = new Date().toLocaleDateString("fr-CA");
               this.props.PostAddStatus(values);
               resetForm();
@@ -103,7 +102,9 @@ class TaskForm extends Component<LinkProps, { task: Task; error: boolean }> {
                     component={DatedElement}
                   />
                 </div>
-                <Button className={style.form_button}>Add new task</Button>
+                <Button type="submit" className={style.form_button}>
+                  Add new task
+                </Button>
               </Form>
             )}
           </Formik>
